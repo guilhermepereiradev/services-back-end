@@ -4,9 +4,12 @@ import com.soulcode.Servicos.Models.Cargo;
 import com.soulcode.Servicos.Models.Funcionario;
 import com.soulcode.Servicos.Repositories.CargoRepository;
 import com.soulcode.Servicos.Repositories.FuncionarioRepository;
+import com.soulcode.Servicos.Services.Exceptions.DataIntegrityViolationException;
+import com.soulcode.Servicos.Services.Exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +35,9 @@ public class FuncionarioService {
 
     public Funcionario mostrarUmFuncionarioPeloId(Integer idFuncionario){
         Optional<Funcionario> funcionario = funcionarioRepository.findById(idFuncionario);
-        return funcionario.orElseThrow();
+        return funcionario.orElseThrow(
+                () -> new EntityNotFoundException("Funcionário não encontrado: "+ idFuncionario)
+        );
     }
 
 //    Vamos criar mais um serviço para buscar um funcionario pelo seu email
@@ -44,10 +49,14 @@ public class FuncionarioService {
 //  Vamos criar um serviço para cadastrar um novo funcionario
     public Funcionario cadastrarFuncionario(Funcionario funcionario, Integer idCargo){
 //  So por preocação nos vamos colocar o id do funcinario como null
-        funcionario.setIdFuncionario(null);
-        Optional<Cargo> cargo = cargoRepository.findById(idCargo);
-        funcionario.setCargo(cargo.get());
-        return funcionarioRepository.save(funcionario);
+        try {
+            funcionario.setIdFuncionario(null);
+            Optional<Cargo> cargo = cargoRepository.findById(idCargo);
+            funcionario.setCargo(cargo.get());
+            return funcionarioRepository.save(funcionario);
+        } catch(Exception e){
+            throw new DataIntegrityViolationException("Atributo não pode ser duplicado");
+        }
     }
 
     public void excluirFuncionario(Integer idFuncionario){

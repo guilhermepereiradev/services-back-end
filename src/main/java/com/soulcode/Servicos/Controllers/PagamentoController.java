@@ -42,6 +42,10 @@ public class PagamentoController {
         return pagamentos;
     }
 
+    @GetMapping("/pagamentosChamadosComCliente")
+    public List<List> orcamentoComServicoCliente(){
+        return pagamentoService.orcamentoComServicoCliente();
+    }
     @PostMapping("/pagamentos/{idChamado}")
     public ResponseEntity<Pagamento> cadastrarPagamento(@PathVariable Integer idChamado,
                                                         @RequestBody Pagamento pagamento){

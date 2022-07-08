@@ -67,4 +67,8 @@ public class PagamentoService {
         }
         return pagamentoRepository.save(pagamento);
     }
+
+    public List<List> orcamentoComServicoCliente(){
+        return pagamentoRepository.orcamentoCOmServicoCliente();
+    }
 }

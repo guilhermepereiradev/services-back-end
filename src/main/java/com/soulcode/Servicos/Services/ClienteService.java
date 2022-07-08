@@ -2,6 +2,7 @@ package com.soulcode.Servicos.Services;
 
 import com.soulcode.Servicos.Models.Cliente;
 import com.soulcode.Servicos.Repositories.ClienteRepository;
+import com.soulcode.Servicos.Services.Exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,11 @@ public class ClienteService {
         return clienteRepository.findAll();
     }
 
-    public Cliente mostrarClientePeloId(Integer idClient){
-        Optional<Cliente> cliente = clienteRepository.findById(idClient);
-        return cliente.orElseThrow();
+    public Cliente mostrarClientePeloId(Integer idCliente){
+        Optional<Cliente> cliente = clienteRepository.findById(idCliente);
+        return cliente.orElseThrow( () ->
+            new EntityNotFoundException("Cliente não encontrado: "+ idCliente)
+        );
     }
 
     public Cliente mostrarClientePeloEmail(String email){
