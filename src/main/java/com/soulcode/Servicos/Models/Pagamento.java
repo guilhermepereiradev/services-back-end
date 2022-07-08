@@ -1,6 +1,7 @@
 package com.soulcode.Servicos.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
 
@@ -10,16 +11,15 @@ public class Pagamento {
     @Id
     private Integer idPagamento;
 
-    @Column
-    private Double valor;
+    @NumberFormat(pattern = "#.##0,00")
+    @Column(nullable = false)
+    private double valor;
 
-    @Column
-    private String formaPagamento;
+    @Column(nullable = false)
+    private String formPagamento;
 
     @Enumerated(EnumType.STRING)
-    private StatusPagamento statusPagamento;
-
-
+    private StatusPagamento status;
 
     public Integer getIdPagamento() {
         return idPagamento;
@@ -29,27 +29,27 @@ public class Pagamento {
         this.idPagamento = idPagamento;
     }
 
-    public Double getValor() {
+    public double getValor() {
         return valor;
     }
 
-    public void setValor(Double valor) {
+    public void setValor(double valor) {
         this.valor = valor;
     }
 
-    public String getFormaPagamento() {
-        return formaPagamento;
+    public String getFormPagamento() {
+        return formPagamento;
     }
 
-    public void setFormaPagamento(String formaPagamento) {
-        this.formaPagamento = formaPagamento;
+    public void setFormPagamento(String formPagamento) {
+        this.formPagamento = formPagamento;
     }
 
-    public StatusPagamento getStatusPagamento() {
-        return statusPagamento;
+    public StatusPagamento getStatus() {
+        return status;
     }
 
-    public void setStatusPagamento(StatusPagamento statusPagamento) {
-        this.statusPagamento = statusPagamento;
+    public void setStatus(StatusPagamento status) {
+        this.status = status;
     }
 }

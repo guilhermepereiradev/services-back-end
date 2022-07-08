@@ -25,26 +25,44 @@ public class PagamentoController {
     PagamentoService pagamentoService;
 
     @GetMapping("/pagamentos")
-    public List<Pagamento> mostrarPagamentos(){
-        return pagamentoService.mostrarPagamentos();
+    public List<Pagamento> mostrarTodosPagamentos(){
+        List<Pagamento> pagamentos = pagamentoService.mostrarTodosPagamentos();
+        return pagamentos;
     }
 
-    @GetMapping("/pagamento/{idPagamento}")
+    @GetMapping("/pagamentos/{idPagamento}")
     public ResponseEntity<Pagamento> mostrarPagamentoPeloId(@PathVariable Integer idPagamento){
         Pagamento pagamento = pagamentoService.mostrarPagamentoPeloId(idPagamento);
         return ResponseEntity.ok().body(pagamento);
     }
 
-    @PostMapping("/pagamento/{idChamado}")
-    public ResponseEntity<Pagamento> cadastrarPagamento(@PathVariable Integer idChamado, @RequestBody Pagamento pagamento){
-        pagamento = pagamentoService.cadastrarPagamento(pagamento, idChamado);
-        URI novaURI = ServletUriComponentsBuilder.fromCurrentRequest().path("id").buildAndExpand(pagamento.getIdPagamento()).toUri();
-        return ResponseEntity.created(novaURI).body(pagamento);
+    @GetMapping("/pagamentosPeloStatus")
+    public List<Pagamento> mostrarPagamentosPeloStatus(@RequestParam("status") String status){
+        List<Pagamento> pagamentos = pagamentoService.mostrarPagamentosPeloStatus(status);
+        return pagamentos;
     }
 
-    @PutMapping("pagamento/{idPagamento}")
-    public ResponseEntity<Pagamento> atualizarPagamento(@PathVariable Integer idPagamento, @RequestBody Pagamento pagamento){
-        pagamento = pagamentoService.atualizarPagamento(pagamento, idPagamento);
-        return  ResponseEntity.ok().body(pagamento);
+    @PostMapping("/pagamentos/{idChamado}")
+    public ResponseEntity<Pagamento> cadastrarPagamento(@PathVariable Integer idChamado,
+                                                        @RequestBody Pagamento pagamento){
+        pagamento = pagamentoService.cadastrarPagamento(pagamento,idChamado);
+        URI novaUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(pagamento.getIdPagamento()).toUri();
+        return ResponseEntity.created(novaUri).build();
+    }
+
+    @PutMapping("/pagamentos/{idPagamento}")
+    public ResponseEntity<Pagamento> editarPagamento(@PathVariable Integer idPagamento,
+                                                     @RequestBody Pagamento pagamento){
+        pagamento.setIdPagamento(idPagamento);
+        pagamentoService.editarPagamento(pagamento);
+        return ResponseEntity.ok().body(pagamento);
+    }
+
+    @PutMapping("/pagamentosAlteracaoStatus/{idPagamento}")
+    public ResponseEntity<Pagamento> modificarStatusPagamento(@PathVariable Integer idPagamento,
+                                                              @RequestParam("status") String status){
+        pagamentoService.modificarStatusPagamento(idPagamento,status);
+        return ResponseEntity.noContent().build();
     }
 }

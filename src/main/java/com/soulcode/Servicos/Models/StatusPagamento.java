@@ -2,12 +2,12 @@ package com.soulcode.Servicos.Models;
 
 public enum StatusPagamento {
 
-    LANCADO("Lançado"),
+    LANCADO("Lancado"),
     QUITADO("Quitado");
 
     private String conteudo;
 
-    StatusPagamento(String conteudo) {
+    private StatusPagamento(String conteudo){
         this.conteudo = conteudo;
     }
 

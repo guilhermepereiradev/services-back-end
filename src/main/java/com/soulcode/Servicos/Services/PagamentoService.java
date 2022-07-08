@@ -2,6 +2,7 @@ package com.soulcode.Servicos.Services;
 
 import com.soulcode.Servicos.Models.Chamado;
 import com.soulcode.Servicos.Models.Pagamento;
+import com.soulcode.Servicos.Models.StatusPagamento;
 import com.soulcode.Servicos.Repositories.ChamadoRepository;
 import com.soulcode.Servicos.Repositories.PagamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class PagamentoService {
 
     @Autowired
     ChamadoRepository chamadoRepository;
-    public List<Pagamento> mostrarPagamentos(){
+    public List<Pagamento> mostrarTodosPagamentos(){
         return pagamentoRepository.findAll();
     }
 
@@ -28,22 +29,42 @@ public class PagamentoService {
         Optional<Pagamento> pagamento = pagamentoRepository.findById(idPagamento);
         return pagamento.orElseThrow();
     }
-    public Pagamento cadastrarPagamento(Pagamento pagamento, Integer idChamado){
-        Optional<Chamado> chamado = chamadoRepository.findById(idChamado);
-        pagamento.setIdPagamento(chamado.get().getIdChamado());
-        pagamentoRepository.save(pagamento);
-        chamado.get().setPagamento(pagamento);
-        chamadoRepository.save(chamado.get());
-        return pagamento;
+
+    public List<Pagamento> mostrarPagamentosPeloStatus(String status){
+        return pagamentoRepository.findByStatus(status);
     }
 
-    public Pagamento atualizarPagamento(Pagamento pagamento, Integer idPagamento){
-        Pagamento pagamentoAntigo = pagamentoRepository.getById(idPagamento);
-        Optional<Chamado> chamado = chamadoRepository.findById(idPagamento);
-        pagamento.setIdPagamento(pagamentoAntigo.getIdPagamento());
-        pagamentoRepository.save(pagamento);
-        chamado.get().setPagamento(pagamento);
-        chamadoRepository.save(chamado.get());
-        return pagamento;
+    public Pagamento cadastrarPagamento(Pagamento pagamento, Integer idChamado){
+        Optional<Chamado> chamado = chamadoRepository.findById(idChamado);
+        if (chamado.isPresent()){
+            pagamento.setIdPagamento(idChamado);
+            pagamento.setStatus(StatusPagamento.LANCADO);
+            pagamentoRepository.save(pagamento);
+
+            chamado.get().setPagamento(pagamento);
+            chamadoRepository.save(chamado.get());
+            return pagamento;
+        }else{
+            throw new RuntimeException();
+        }
+
+    }
+
+    public Pagamento editarPagamento(Pagamento pagamento){
+        return pagamentoRepository.save(pagamento);
+    }
+
+    public Pagamento modificarStatusPagamento(Integer idPagamento,String status){
+        Pagamento pagamento = mostrarPagamentoPeloId(idPagamento);
+
+        switch (status){
+            case "LANCADO":
+                pagamento.setStatus(StatusPagamento.LANCADO);
+                break;
+            case "QUITADO":
+                pagamento.setStatus(StatusPagamento.QUITADO);
+                break;
+        }
+        return pagamentoRepository.save(pagamento);
     }
 }
