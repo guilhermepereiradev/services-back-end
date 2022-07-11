@@ -24,7 +24,7 @@ public class Cliente {
     private List<Chamado> chamados = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_Endereco", unique=true)
+    @JoinColumn(name = "idEndereco", unique=true)
     private Endereco endereco;
 
 

@@ -25,7 +25,7 @@ public class CargoController {
         return cargos;
     }
 
-    @GetMapping("/cargo/{idCargo}")
+    @GetMapping("/cargos/{idCargo}")
     public ResponseEntity<Cargo> mostrarCargoPeloId(@PathVariable Integer idCargo){
         Cargo cargo = cargoService.mostrarCargoPeloId(idCargo);
         return ResponseEntity.ok().body(cargo);
@@ -44,14 +44,14 @@ public class CargoController {
         return  ResponseEntity.created(novaURI).body(cargo);
     }
 
-    @PutMapping("/cargo/{idCargo}")
+    @PutMapping("/cargos/{idCargo}")
     public ResponseEntity<Cargo> editarCargo(@PathVariable Integer idCargo, @RequestBody Cargo cargo){
         cargo.setIdCargo(idCargo);
         cargoService.editarCargo(cargo);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/cargo/{idCargo}")
+    @DeleteMapping("/cargos/{idCargo}")
     public ResponseEntity<Void> deletarCargoPeloId(@PathVariable Integer idCargo){
         cargoService.deletarCargoPeloId(idCargo);
         return ResponseEntity.noContent().build();
