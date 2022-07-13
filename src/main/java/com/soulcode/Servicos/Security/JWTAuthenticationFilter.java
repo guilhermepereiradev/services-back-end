@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -32,7 +33,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try{
-            //transfotmar o json de request em um user
+            //transfotmar o json de {request} em um user
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword(), new ArrayList<>()));
         }catch (IOException io){
@@ -52,6 +53,19 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // {"Authorization: "<token>"}
         response.getWriter().write("{\"Authorization\": \"" + token + "\"}");
         response.getWriter().flush();
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        response.setStatus(401);
+        response.setContentType("aplication/json");
+        response.getWriter().write(json());
+        response.getWriter().flush();
+    }
+
+    String json(){
+        long date = new Date().getTime();
+        return "{\"timestamp\": "+ date +", \"status\": 401, \"error\": \"Não autorizado\", \"message\": \"Email/senha inválidos\", \"path\": \"/login\"}";
     }
 }
 /*
