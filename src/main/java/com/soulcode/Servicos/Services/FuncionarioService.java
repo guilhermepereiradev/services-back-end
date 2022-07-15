@@ -51,6 +51,7 @@ public class FuncionarioService {
 //  So por preocação nos vamos colocar o id do funcinario como null
         try {
             funcionario.setIdFuncionario(null);
+            funcionario.setFoto("");
             Optional<Cargo> cargo = cargoRepository.findById(idCargo);
             funcionario.setCargo(cargo.get());
             return funcionarioRepository.save(funcionario);

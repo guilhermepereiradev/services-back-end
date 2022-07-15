@@ -20,7 +20,7 @@ public class Cliente {
     private String email;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "cliente")
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<Chamado> chamados = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
