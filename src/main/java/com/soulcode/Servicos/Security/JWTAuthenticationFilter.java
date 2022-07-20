@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+//essa classe entra em ação ao chamar /login
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
@@ -31,20 +32,28 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     //
 
     @Override
+    //tenta autenticar o usuario
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try{
             //transfotmar o json de {request} em um user
+            //extrair informações de user da request "bruta"
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
-            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword(), new ArrayList<>()));
+            return authenticationManager.authenticate( //chama a autenticacao do spring
+                    new UsernamePasswordAuthenticationToken( //informações do user e permissões
+                            user.getLogin(),
+                            user.getPassword(),
+                            new ArrayList<>()));
         }catch (IOException io){
+            // caso o json da requisição não bater com o user.class
             throw new RuntimeException(io.getMessage());
         }
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        AuthUserDetail user = (AuthUserDetail) authResult.getPrincipal();
-        String token = jwtUtils.generationToken(user.getUsername());
+        // gerar o token e devolver para o usuario que se autenticou com sucesso
+        AuthUserDetail user = (AuthUserDetail) authResult.getPrincipal(); // retorna o user
+        String token = jwtUtils.generationToken(user.getUsername()); // retorna o token
 
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
@@ -57,13 +66,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        response.setStatus(401);
-        response.setContentType("aplication/json");
-        response.getWriter().write(json());
-        response.getWriter().flush();
+        response.setStatus(401); //unauthorized
+        response.setContentType("aplication/json"); // tipo da resposta
+        response.getWriter().write(json()); // mensagem de erro no body
+        response.getWriter().flush(); // termina a escrita
     }
 
-    String json(){
+    String json(){ //formatar a msg de erro
         long date = new Date().getTime();
         return "{\"timestamp\": "+ date +", \"status\": 401, \"error\": \"Não autorizado\", \"message\": \"Email/senha inválidos\", \"path\": \"/login\"}";
     }

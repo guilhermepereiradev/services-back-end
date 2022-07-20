@@ -22,6 +22,8 @@ public class ClienteService {
     public List<Cliente> mostrarTodosClientes(){
         return clienteRepository.findAll();
     }
+
+
     @Cacheable(value = "clientesCache", key = "#idCliente") // clientesCache::1
     public Cliente mostrarClientePeloId(Integer idCliente){
         Optional<Cliente> cliente = clienteRepository.findById(idCliente);
@@ -30,14 +32,18 @@ public class ClienteService {
         );
     }
 
+
     public Cliente mostrarClientePeloEmail(String email){
         Optional<Cliente> cliente = clienteRepository.findByEmail(email);
         return cliente.orElseThrow();
     }
+
+    @CachePut(value = "clientesCache", key = "#cliente.idCliente")
     public Cliente cadastrarCliente(Cliente cliente){
         return clienteRepository.save(cliente);
     }
-    @CacheEvict(value = "clienteCache", key = "#idCliente", allEntries = true) //allEntries = true, quando executado o cache tbm é excluido
+
+    @CacheEvict(value = "clientesCache", key = "#idCliente", allEntries = true) //allEntries = true, quando executado o cache tbm é excluido
     public void excluirCliente(Integer idCliente){
         mostrarClientePeloId(idCliente);
         clienteRepository.deleteById(idCliente);
