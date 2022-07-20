@@ -5,7 +5,10 @@ import com.soulcode.Servicos.Models.Pagamento;
 import com.soulcode.Servicos.Models.StatusPagamento;
 import com.soulcode.Servicos.Repositories.ChamadoRepository;
 import com.soulcode.Servicos.Repositories.PagamentoRepository;
+import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,19 +24,24 @@ public class PagamentoService {
 
     @Autowired
     ChamadoRepository chamadoRepository;
+
+    @Cacheable("pagamentosCache")
     public List<Pagamento> mostrarTodosPagamentos(){
         return pagamentoRepository.findAll();
     }
 
+    @Cacheable(value = "pagamentosCache", key = "#idPagamento")
     public Pagamento mostrarPagamentoPeloId(Integer idPagamento){
         Optional<Pagamento> pagamento = pagamentoRepository.findById(idPagamento);
         return pagamento.orElseThrow();
     }
 
+    @Cacheable(value = "pagamentosCache", key = "#status")
     public List<Pagamento> mostrarPagamentosPeloStatus(String status){
         return pagamentoRepository.findByStatus(status);
     }
 
+    @CachePut(value = "pagamentosCache", key = "#pagamento.idPagamento")
     public Pagamento cadastrarPagamento(Pagamento pagamento, Integer idChamado){
         Optional<Chamado> chamado = chamadoRepository.findById(idChamado);
         if (chamado.isPresent()){
@@ -49,11 +57,12 @@ public class PagamentoService {
         }
 
     }
-
+    @CachePut(value = "pagamentosCache", key = "#pagamento.idPagamento")
     public Pagamento editarPagamento(Pagamento pagamento){
         return pagamentoRepository.save(pagamento);
     }
 
+    @CachePut(value = "pagamentosCache", key = "#idPagamento")
     public Pagamento modificarStatusPagamento(Integer idPagamento,String status){
         Pagamento pagamento = mostrarPagamentoPeloId(idPagamento);
 
@@ -68,6 +77,7 @@ public class PagamentoService {
         return pagamentoRepository.save(pagamento);
     }
 
+    @Cacheable(value = "pagamentosCache")
     public List<List> orcamentoComServicoCliente(){
         return pagamentoRepository.orcamentoCOmServicoCliente();
     }

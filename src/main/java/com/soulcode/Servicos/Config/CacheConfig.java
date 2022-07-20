@@ -33,6 +33,14 @@ public class CacheConfig {
                 ).withCacheConfiguration("chamadosCache",
                         RedisCacheConfiguration.defaultCacheConfig()
                         .entryTtl(Duration.ofSeconds(10))
+                        .serializeValuesWith(serializationPair))
+                .withCacheConfiguration("userCache",
+                        RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofSeconds(5))
+                        .serializeValuesWith(serializationPair))
+                .withCacheConfiguration("authUserDetailCache",
+                        RedisCacheConfiguration.defaultCacheConfig().
+                        entryTtl(Duration.ofHours(1))
                         .serializeValuesWith(serializationPair));
     }
 }

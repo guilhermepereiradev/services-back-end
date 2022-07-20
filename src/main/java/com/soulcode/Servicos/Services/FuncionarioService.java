@@ -6,7 +6,9 @@ import com.soulcode.Servicos.Repositories.CargoRepository;
 import com.soulcode.Servicos.Repositories.FuncionarioRepository;
 import com.soulcode.Servicos.Services.Exceptions.DataIntegrityViolationException;
 import com.soulcode.Servicos.Services.Exceptions.EntityNotFoundException;
+import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
