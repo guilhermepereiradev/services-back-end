@@ -19,7 +19,7 @@ public class AuthUserDetailService implements UserDetailsService {
 
     @Override
     //retorna um UserDetails de acordo com o username
-    @Cacheable("authUserDetailCache")
+//    @Cacheable("authUserDetailCache")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByLogin(username); //filtro por email
         if(user.isEmpty()){ //ou use "!user.isPresent"
