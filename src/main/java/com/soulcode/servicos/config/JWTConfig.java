@@ -5,12 +5,11 @@ import com.soulcode.servicos.service.AuthUserDetailService;
 import com.soulcode.servicos.util.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,8 +21,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-@EnableWebSecurity
-public class JWTConfig extends WebSecurityConfiguration {
+@Configuration
+public class JWTConfig {
     private JWTUtils jwtUtils;
 
     private AuthUserDetailService authUserDetailService;
@@ -47,15 +46,17 @@ public class JWTConfig extends WebSecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(
+                        new JWTAuthenticationFilter(
+                                authenticationConfiguration.getAuthenticationManager(), jwtUtils),
+                                UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth ->
                         auth
-                                .requestMatchers("/login")
+                            .requestMatchers(HttpMethod.POST, "/login")
                                 .permitAll()
-                                .anyRequest()
+                            .anyRequest()
                                 .authenticated())
-                .addFilterBefore(new JWTAuthenticationFilter(authenticationConfiguration.getAuthenticationManager(), jwtUtils), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session ->
                         session
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
