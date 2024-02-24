@@ -1,4 +1,4 @@
-package com.soulcode.servicos.controller.exceptions;
+package com.soulcode.servicos.controller.exception;
 
 import java.time.Instant;
 
@@ -11,6 +11,15 @@ public class StandardError{
     private String path;
 
     public StandardError(){}
+
+    public StandardError(Instant timestamp, Integer status, String error, String trace, String message, String path) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.error = error;
+        this.trace = trace;
+        this.message = message;
+        this.path = path;
+    }
 
     public Instant getTimestamp() {
         return timestamp;

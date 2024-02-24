@@ -26,7 +26,7 @@ public class FuncionarioController {
 
     @GetMapping("/funcionarios/{idFuncionario}")
     public ResponseEntity<Funcionario> mostrarUmFuncionarioPeloId(@PathVariable Integer idFuncionario){
-        Funcionario funcionario = funcionarioService.mostrarUmFuncionarioPeloId(idFuncionario);
+        Funcionario funcionario = funcionarioService.buscarOuFalhar(idFuncionario);
         return ResponseEntity.ok().body(funcionario);
     }
 

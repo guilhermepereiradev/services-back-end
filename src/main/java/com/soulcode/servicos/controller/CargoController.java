@@ -1,11 +1,11 @@
 package com.soulcode.servicos.controller;
 
+import com.soulcode.servicos.dtos.CargoRequest;
+import com.soulcode.servicos.dtos.CargoResponse;
 import com.soulcode.servicos.model.Cargo;
 import com.soulcode.servicos.service.CargoService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -14,45 +14,57 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/servicos/cargos")
+@RequestMapping("/api/servicos/cargos")
 public class CargoController {
 
-    @Autowired
-    CargoService cargoService;
+    private final CargoService cargoService;
+
+    public CargoController(CargoService cargoService) {
+        this.cargoService = cargoService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Cargo>> listar(){
         return ResponseEntity.ok(cargoService.listar());
     }
 
-    @GetMapping("/{idCargo}")
-    public ResponseEntity<Cargo> buscar(@PathVariable Integer idCargo){
-        return ResponseEntity.ok(cargoService.buscarOuFalhar(idCargo));
-    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Cargo> buscar(@PathVariable Integer id, @RequestParam(required = false) String nome){
 
-    @GetMapping("/{nome}/nome")
-    public ResponseEntity<Cargo> buscarPeloNome(@PathVariable String nome){
-        return ResponseEntity.ok(cargoService.buscarPeloNome(nome));
+        if (nome.isBlank()) {
+            return ResponseEntity.ok(cargoService.buscarPeloNome(nome));
+        }
+
+        return ResponseEntity.ok(cargoService.buscarOuFalhar(id));
     }
 
     @PostMapping
-    public ResponseEntity<Cargo> cadastrarCargo(@RequestBody Cargo cargo){
+    public ResponseEntity<CargoResponse> cadastrarCargo(@RequestBody CargoRequest cargoRequest){
+        var cargo = new Cargo();
+        BeanUtils.copyProperties(cargoRequest, cargo);
+
         cargo = cargoService.salvar(cargo);
-        URI novaURI = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(cargo.getIdCargo()).toUri();
-        return  ResponseEntity.created(novaURI).body(cargo);
+
+        URI novaURI = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(cargo.getId()).toUri();
+
+        return  ResponseEntity.created(novaURI).body(new CargoResponse(cargo));
     }
 
-    @PutMapping("/{idCargo}")
-    public ResponseEntity<Cargo> editarCargo(@PathVariable Integer idCargo, @RequestBody Cargo cargo){
-        Cargo novoCargo = cargoService.buscarOuFalhar(idCargo);
-        BeanUtils.copyProperties(cargo, novoCargo);
+    @PutMapping("/{id}")
+    public ResponseEntity<CargoResponse> editarCargo(@PathVariable Integer id, @RequestBody CargoRequest cargoRequest){
+        var cargo = cargoService.buscarOuFalhar(id);
+        BeanUtils.copyProperties(cargoRequest, cargo);
 
-        return ResponseEntity.ok(cargoService.salvar(novoCargo));
+        cargo = cargoService.salvar(cargo);
+
+        return ResponseEntity.ok(new CargoResponse(cargo));
     }
 
-    @DeleteMapping("/{idCargo}")
-    public ResponseEntity<Void> deletarCargoPeloId(@PathVariable Integer idCargo){
-        cargoService.deletarCargoPeloId(idCargo);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarCargoPeloId(@PathVariable Integer id){
+        cargoService.deletarCargoPeloId(id);
         return ResponseEntity.noContent().build();
     }
 }

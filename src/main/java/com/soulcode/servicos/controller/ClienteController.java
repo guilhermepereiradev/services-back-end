@@ -20,13 +20,13 @@ public class ClienteController {
 
     @GetMapping("/clientes")
     public List<Cliente> mostrarTodosClientes(){
-        List<Cliente> clientes = clienteService.mostrarTodosClientes();
+        List<Cliente> clientes = clienteService.listar();
         return clientes;
     }
 
     @GetMapping("/clientes/{idCliente}")
     public ResponseEntity<Cliente> mostrarClientePeloId(@PathVariable Integer idCliente){
-        Cliente cliente = clienteService.mostrarClientePeloId(idCliente);
+        Cliente cliente = clienteService.buscarOuFalhar(idCliente);
         return ResponseEntity.ok().body(cliente);
     }
 

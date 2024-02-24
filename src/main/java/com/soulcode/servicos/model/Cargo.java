@@ -1,6 +1,7 @@
 package com.soulcode.servicos.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.OneToMany;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,12 +11,11 @@ import java.util.List;
 public class Cargo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCargo;
+    private Integer id;
 
     @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = true)
     private String descricao;
 
     @Column(nullable = false)
@@ -24,14 +24,14 @@ public class Cargo {
 
     @JsonIgnore
     @OneToMany(mappedBy = "cargo")
-    private List<Funcionario> funcionario = new ArrayList<>();
+    private List<Funcionario> funcionarios = new ArrayList<>();
 
-    public Integer getIdCargo() {
-        return idCargo;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdCargo(Integer idCargo) {
-        this.idCargo = idCargo;
+    public void setId(Integer idCargo) {
+        this.id = idCargo;
     }
 
     public String getNome() {
@@ -58,11 +58,11 @@ public class Cargo {
         this.salario = salario;
     }
 
-    public List<Funcionario> getFuncionario() {
-        return funcionario;
+    public List<Funcionario> getFuncionarios() {
+        return funcionarios;
     }
 
-    public void setFuncionario(List<Funcionario> funcionario) {
-        this.funcionario = funcionario;
+    public void setFuncionarios(List<Funcionario> funcionario) {
+        this.funcionarios = funcionario;
     }
 }

@@ -2,10 +2,10 @@ package com.soulcode.servicos.service;
 
 import com.soulcode.servicos.model.Cargo;
 import com.soulcode.servicos.model.Funcionario;
+import com.soulcode.servicos.model.exception.FuncionarioNaoEncontradoException;
 import com.soulcode.servicos.repository.CargoRepository;
 import com.soulcode.servicos.repository.FuncionarioRepository;
 import com.soulcode.servicos.service.exceptions.DataIntegrityViolationException;
-import com.soulcode.servicos.service.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,32 +22,24 @@ public class FuncionarioService {
     @Autowired
     CargoRepository cargoRepository;
 
-    // primeiro serviço na tabela de funcionarios vai ser a leitura de todos os funcionarios cadastrados
-    //findAll -> metodo do spring Data JPA -> busca todos os registros de uma tabela
 
     public List<Funcionario> mostrarTodosFuncionarios(){
         return funcionarioRepository.findAll();
     }
 
-    //vamos criar mais um serviço relacionado ao funcionário
-    //vamos criar um serviço de buscar o funcionario pelo seu id(chave primaria)
 
-    public Funcionario mostrarUmFuncionarioPeloId(Integer idFuncionario){
-        Optional<Funcionario> funcionario = funcionarioRepository.findById(idFuncionario);
-        return funcionario.orElseThrow(
-                () -> new EntityNotFoundException("Funcionário não encontrado: "+ idFuncionario)
-        );
+    public Funcionario buscarOuFalhar(Integer idFuncionario) {
+        return funcionarioRepository.findById(idFuncionario)
+                .orElseThrow(() -> new FuncionarioNaoEncontradoException(idFuncionario));
     }
 
-//    Vamos criar mais um serviço para buscar um funcionario pelo seu email
     public Funcionario mostrarUmFuncioanarioPeloEmail(String email){
-        Optional<Funcionario> funcionario = funcionarioRepository.findByEmail(email);
-        return funcionario.orElseThrow();
+        return funcionarioRepository.findByEmail(email)
+                .orElseThrow(() -> new FuncionarioNaoEncontradoException(email));
     }
 
-//  Vamos criar um serviço para cadastrar um novo funcionario
+
     public Funcionario cadastrarFuncionario(Funcionario funcionario, Integer idCargo){
-//  So por preocação nos vamos colocar o id do funcinario como null
         try {
             funcionario.setIdFuncionario(null);
             funcionario.setFoto("");
@@ -68,7 +60,7 @@ public class FuncionarioService {
     }
 
     public Funcionario salvarFoto(Integer idFuncionario, String caminhoFoto){
-        Funcionario funcionario = mostrarUmFuncionarioPeloId(idFuncionario);
+        Funcionario funcionario = buscarOuFalhar(idFuncionario);
         funcionario.setFoto(caminhoFoto);
         return funcionarioRepository.save(funcionario);
     }

@@ -1,12 +1,13 @@
 package com.soulcode.servicos.service;
 
 import com.soulcode.servicos.model.Cargo;
+import com.soulcode.servicos.model.exception.CargoNaoEncontradoException;
 import com.soulcode.servicos.repository.CargoRepository;
-import com.soulcode.servicos.service.exceptions.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,34 +15,42 @@ import java.util.List;
 @Service
 public class CargoService {
 
-    @Autowired
-    CargoRepository cargoRepository;
+    private final CargoRepository cargoRepository;
+
+    public CargoService(CargoRepository cargoRepository) {
+        this.cargoRepository = cargoRepository;
+    }
 
     @Cacheable("cargosCache")
     public List<Cargo> listar(){
         return cargoRepository.findAll();
     }
 
-    @Cacheable(value = "cargosCache", key = "#idCargo")
-    public Cargo buscarOuFalhar(Integer idCargo){
-        return cargoRepository.findById(idCargo)
-                .orElseThrow(() -> new EntityNotFoundException("Cargo não encontrado para o id: "+idCargo));
+    @Cacheable(value = "cargosCache", key = "#id")
+    public Cargo buscarOuFalhar(Integer id){
+        return cargoRepository.findById(id)
+                .orElseThrow(() -> new CargoNaoEncontradoException(id));
     }
 
     @Cacheable(value = "cargosCache", key = "#nome")
     public Cargo buscarPeloNome(String nome){
         return cargoRepository.findByNome(nome).orElseThrow(() ->
-            new EntityNotFoundException("Cargo não encontrado para o nome: "+nome));
+            new CargoNaoEncontradoException(String.format("Cargo não encontrado com o nome %s", nome)));
     }
 
-    @CachePut(value = "cargosCache", key = "#cargo.idCargo")
+    @Transactional
+    @CachePut(value = "cargosCache", key = "#cargo.id")
     public Cargo salvar(Cargo cargo){
         return cargoRepository.save(cargo);
     }
 
-    @CacheEvict(value = "cargosCache", key = "#idCargo", allEntries = true)
-    public void deletarCargoPeloId(Integer idCargo){
-        Cargo cargo = buscarOuFalhar(idCargo);
-        cargoRepository.delete(cargo);
+    @Transactional
+    @CacheEvict(value = "cargosCache", key = "#id", allEntries = true)
+    public void deletarCargoPeloId(Integer id){
+        try {
+            cargoRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new CargoNaoEncontradoException(id);
+        }
     }
 }

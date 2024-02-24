@@ -1,7 +1,9 @@
 package com.soulcode.servicos.controller;
 
 import com.soulcode.servicos.model.Chamado;
+import com.soulcode.servicos.model.StatusChamado;
 import com.soulcode.servicos.service.ChamadoService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -18,44 +20,42 @@ import java.util.List;
 public class ChamadoController {
 
     @Autowired
-    ChamadoService chamadoService;
+    private ChamadoService chamadoService;
 
     @GetMapping
     public ResponseEntity<List<Chamado>> buscar(){
-        return ResponseEntity.ok(chamadoService.mostrarChamados());
+        return ResponseEntity.ok(chamadoService.listar());
     }
 
     @GetMapping("/{idChamado}")
     public ResponseEntity<Chamado> mostrarChamadoPeloId(@PathVariable Integer idChamado){
-        Chamado chamado = chamadoService.mostrarChamadoPeloId(idChamado);
-        return ResponseEntity.ok().body(chamado);
+        return ResponseEntity.ok(chamadoService.buscarOuFalhar(idChamado));
     }
 
     @GetMapping("/{idCliente}/cliente")
-    public List<Chamado> buscarChamadosPeloCliente(@PathVariable Integer idCliente){
-        return chamadoService.buscarChamadosPeloCliente(idCliente);
+    public ResponseEntity<List<Chamado>> buscarChamadosPeloCliente(@PathVariable Integer idCliente){
+        return ResponseEntity.ok(chamadoService.bucarPeloCliente(idCliente));
     }
 
     @GetMapping("/{idFuncionario}/funcionario")
-    public List<Chamado> buscarChamadoPeloFuncionario(@PathVariable Integer idFuncionario){
-        List<Chamado> chamados = chamadoService.buscarChamadoPeloFuncionario(idFuncionario);
-        return chamados;
+    public ResponseEntity<List<Chamado>> buscarChamadoPeloFuncionario(@PathVariable Integer idFuncionario){
+        return ResponseEntity.ok(chamadoService.buscarChamadoPeloFuncionario(idFuncionario));
     }
 
     @GetMapping("/status")
-    public List<Chamado> buscarChamadoPeloStatus(@RequestParam("status") String status){
-        List<Chamado> chamados = chamadoService.buscarChamadoPeloStatus(status);
-        return chamados;
+    public ResponseEntity<List<Chamado>> buscarChamadoPeloStatus(@RequestParam("status") StatusChamado status){
+        return ResponseEntity.ok(chamadoService.buscarChamadoPeloStatus(status));
     }
 
     @GetMapping("/chamadosPorIntervaloData")
-    public List<Chamado> buscarCbuscarChamadoPorIntervaloData(@RequestParam("data1") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date data1, @RequestParam("data2") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)Date data2){
-        List<Chamado> chamados = chamadoService.buscarChamadoPorIntervaloData(data1, data2);
-        return chamados;
+    public ResponseEntity<List<Chamado>> buscarCbuscarChamadoPorIntervaloData(
+                                    @RequestParam("data1") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date data1,
+                                    @RequestParam("data2") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)Date data2) {
+        return ResponseEntity.ok(chamadoService.buscarChamadoPorIntervaloData(data1, data2));
     }
 
-    @PostMapping("/chamados/{idCliente}")
-    public ResponseEntity<Chamado> cadastrarChamado(@RequestBody  Chamado chamado, @PathVariable Integer idCliente){
+    @PostMapping("/chamados/{idCliente}/clientes")
+    public ResponseEntity<Chamado> cadastrarChamado(@RequestBody Chamado chamado, @PathVariable Integer idCliente){
         chamado = chamadoService.cadastrarChamado(chamado, idCliente);
         URI novaUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(chamado.getIdChamado()).toUri();
         return ResponseEntity.created(novaUri).body(chamado);
@@ -69,8 +69,9 @@ public class ChamadoController {
 
     @PutMapping("/chamados/{idChamado}")
     public ResponseEntity<Chamado> editarChamado(@RequestBody Chamado chamado, @PathVariable Integer idChamado){
-        chamado.setIdChamado(idChamado);
-        chamadoService.editarChamado(chamado, idChamado);
+        Chamado oldChamado = chamadoService.buscarOuFalhar(idChamado);
+        BeanUtils.copyProperties(chamado, oldChamado);
+        chamadoService.cadastrarChamado(chamado, idChamado);
         return ResponseEntity.noContent().build();
     }
 

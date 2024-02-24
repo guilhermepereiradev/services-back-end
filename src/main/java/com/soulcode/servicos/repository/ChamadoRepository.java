@@ -3,21 +3,21 @@ package com.soulcode.servicos.repository;
 import com.soulcode.servicos.model.Chamado;
 import com.soulcode.servicos.model.Cliente;
 import com.soulcode.servicos.model.Funcionario;
+import com.soulcode.servicos.model.StatusChamado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 public interface ChamadoRepository extends JpaRepository<Chamado, Integer> {
-    List<Chamado> findByCliente(Optional<Cliente> cliente);
-    List<Chamado> findByFuncionario(Optional<Funcionario> funcionario);
+    List<Chamado> findByCliente(Cliente cliente);
+    List<Chamado> findByFuncionario(Funcionario funcionario);
 
-    @Query(value = "SELECT * FROM chamado WHERE status =:status", nativeQuery = true)
-    List<Chamado> findByStatus(String status);
+    @Query("from Chamado c where c.status = :status")
+    List<Chamado> findByStatus(StatusChamado status);
 
-    @Query(value = "SELECT * FROM chamado WHERE data_entrada BETWEEN :date1 AND :date2", nativeQuery = true)
+    @Query("from Chamado c where c.dataEntrada between :date1 and :date2")
     List<Chamado> findByIntervaloData(Date date1, Date date2);
 
 }
