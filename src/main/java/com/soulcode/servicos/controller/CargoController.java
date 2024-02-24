@@ -23,19 +23,25 @@ public class CargoController {
         this.cargoService = cargoService;
     }
 
+
+    /**
+     * TODO
+     *  Implementar consulta com filtro por nome
+     */
     @GetMapping
-    public ResponseEntity<List<Cargo>> listar(){
-        return ResponseEntity.ok(cargoService.listar());
+    public ResponseEntity<List<CargoResponse>> listar(){
+        var cargosResponse = cargoService.listar()
+                .stream()
+                .map(CargoResponse::new)
+                .toList();
+
+        return ResponseEntity.ok(cargosResponse);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cargo> buscar(@PathVariable Integer id, @RequestParam(required = false) String nome){
-
-        if (nome.isBlank()) {
-            return ResponseEntity.ok(cargoService.buscarPeloNome(nome));
-        }
-
-        return ResponseEntity.ok(cargoService.buscarOuFalhar(id));
+    public ResponseEntity<CargoResponse> buscar(@PathVariable Integer id){
+        Cargo cargo = cargoService.buscarOuFalhar(id);
+        return ResponseEntity.ok(new CargoResponse(cargo));
     }
 
     @PostMapping

@@ -41,7 +41,7 @@ public class FuncionarioController {
 //       Na linha 43 o funcionario ja é salvo na tabela
 //        agora precisamos criar uma uri para esse novo registro da tabela
         funcionario = funcionarioService.cadastrarFuncionario(funcionario, idCargo);
-        URI novaUri = ServletUriComponentsBuilder.fromCurrentRequest().path("id").buildAndExpand(funcionario.getIdFuncionario()).toUri();
+        URI novaUri = ServletUriComponentsBuilder.fromCurrentRequest().path("id").buildAndExpand(funcionario.getId()).toUri();
         return ResponseEntity.created(novaUri).body(funcionario);
     }
 
@@ -53,7 +53,7 @@ public class FuncionarioController {
 
     @PutMapping("/funcionarios/{idFuncionario}")
     public ResponseEntity<Funcionario> editarFuncionario(@PathVariable Integer idFuncionario, @RequestBody Funcionario funcionario){
-        funcionario.setIdFuncionario(idFuncionario);
+        funcionario.setId(idFuncionario);
         funcionarioService.editarFuncionario(funcionario);
         return ResponseEntity.ok().build();
     }

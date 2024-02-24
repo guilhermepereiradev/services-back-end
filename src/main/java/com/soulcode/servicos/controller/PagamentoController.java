@@ -45,14 +45,14 @@ public class PagamentoController {
                                                         @RequestBody Pagamento pagamento){
         pagamento = pagamentoService.cadastrarPagamento(pagamento,idChamado);
         URI novaUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(pagamento.getIdPagamento()).toUri();
+                .buildAndExpand(pagamento.getId()).toUri();
         return ResponseEntity.created(novaUri).build();
     }
 
     @PutMapping("/pagamentos/{idPagamento}")
     public ResponseEntity<Pagamento> editarPagamento(@PathVariable Integer idPagamento,
                                                      @RequestBody Pagamento pagamento){
-        pagamento.setIdPagamento(idPagamento);
+        pagamento.setId(idPagamento);
         pagamentoService.editarPagamento(pagamento);
         return ResponseEntity.ok().body(pagamento);
     }

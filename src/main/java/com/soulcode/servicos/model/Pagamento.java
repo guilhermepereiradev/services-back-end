@@ -1,14 +1,13 @@
 package com.soulcode.servicos.model;
 
+import jakarta.persistence.*;
 import org.springframework.format.annotation.NumberFormat;
-
-import javax.persistence.*;
 
 @Entity
 public class Pagamento {
 
     @Id
-    private Integer idPagamento;
+    private Integer id;
 
     @NumberFormat(pattern = "#.##0,00")
     @Column(nullable = false)
@@ -20,12 +19,12 @@ public class Pagamento {
     @Enumerated(EnumType.STRING)
     private StatusPagamento status;
 
-    public Integer getIdPagamento() {
-        return idPagamento;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdPagamento(Integer idPagamento) {
-        this.idPagamento = idPagamento;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public double getValor() {

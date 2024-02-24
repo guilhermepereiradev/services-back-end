@@ -43,7 +43,7 @@ public class EnderecoController {
     @PostMapping("/enderecos/{idCliente}")
     public ResponseEntity<Endereco> cadastrarEndereco(@PathVariable Integer idCliente, @RequestBody Endereco endereco){
         endereco = enderecoService.cadastrarEndereco(endereco, idCliente);
-        URI novaURI = ServletUriComponentsBuilder.fromCurrentRequest().path("id").buildAndExpand(endereco.getIdEndereco()).toUri();
+        URI novaURI = ServletUriComponentsBuilder.fromCurrentRequest().path("id").buildAndExpand(endereco.getId()).toUri();
         return ResponseEntity.created(novaURI).body(endereco);
     }
 

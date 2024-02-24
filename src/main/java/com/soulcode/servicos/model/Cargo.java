@@ -1,9 +1,8 @@
 package com.soulcode.servicos.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +29,8 @@ public class Cargo {
         return id;
     }
 
-    public void setId(Integer idCargo) {
-        this.id = idCargo;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNome() {

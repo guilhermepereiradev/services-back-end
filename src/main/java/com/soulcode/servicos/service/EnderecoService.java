@@ -30,7 +30,7 @@ public class EnderecoService {
     @CachePut(value = "enderecoCache", key = "#idCliente")
     public Endereco cadastrarEndereco(Endereco endereco, Integer idCliente){
         Optional<Cliente> cliente = clienteRepository.findById(idCliente);
-        endereco.setIdEndereco(idCliente);
+        endereco.setId(idCliente);
         enderecoRepository.save(endereco);
         cliente.get().setEndereco(endereco);
         clienteRepository.save(cliente.get());
@@ -56,7 +56,7 @@ public class EnderecoService {
        Optional<Cliente> cliente = clienteRepository.findById(idCliente);
        Endereco enderecoAntigo = cliente.get().getEndereco();
 
-       endereco.setIdEndereco(enderecoAntigo.getIdEndereco());
+       endereco.setId(enderecoAntigo.getId());
 
        cliente.get().setEndereco(endereco);
        return enderecoRepository.save(endereco);
@@ -64,7 +64,7 @@ public class EnderecoService {
     @CacheEvict(value = "enderecoCache", key = "#idCliente", allEntries = true)
     public void excluirEnderecoPeloCliente(Integer idCliente){
         Optional<Cliente> cliente = clienteRepository.findById(idCliente);
-        int IdEndereco = cliente.get().getEndereco().getIdEndereco();
+        int IdEndereco = cliente.get().getEndereco().getId();
         cliente.get().setEndereco(null);
         enderecoRepository.deleteById(IdEndereco);
     }

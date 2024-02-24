@@ -42,7 +42,7 @@ public class PagamentoService {
     public Pagamento cadastrarPagamento(Pagamento pagamento, Integer idChamado){
         Optional<Chamado> chamado = chamadoRepository.findById(idChamado);
         if (chamado.isPresent()){
-            pagamento.setIdPagamento(idChamado);
+            pagamento.setId(idChamado);
             pagamento.setStatus(StatusPagamento.LANCADO);
             pagamentoRepository.save(pagamento);
 

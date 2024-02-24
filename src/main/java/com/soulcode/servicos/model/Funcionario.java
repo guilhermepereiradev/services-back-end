@@ -1,8 +1,8 @@
 package com.soulcode.servicos.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +11,7 @@ public class Funcionario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idFuncionario;
+    private Integer id;
 
     @Column(nullable = false, length = 100)
     private String nome;
@@ -30,12 +30,12 @@ public class Funcionario {
     @JoinColumn(name = "idCargo")
     private Cargo cargo;
 
-    public Integer getIdFuncionario() {
-        return idFuncionario;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdFuncionario(Integer idFuncionario) {
-        this.idFuncionario = idFuncionario;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNome() {

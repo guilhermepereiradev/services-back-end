@@ -1,15 +1,15 @@
 package com.soulcode.servicos.model;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 @Entity
 public class Endereco {
 
     @Id
-    private Integer idEndereco;
+    private Integer id;
 
     @Column(nullable = false)
     private String rua;
@@ -23,12 +23,12 @@ public class Endereco {
     @Column(nullable = false)
     private String uf;
 
-    public Integer getIdEndereco() {
-        return idEndereco;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdEndereco(Integer idEndereco) {
-        this.idEndereco = idEndereco;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getRua() {

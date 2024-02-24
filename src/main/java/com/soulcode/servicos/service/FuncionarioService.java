@@ -41,7 +41,7 @@ public class FuncionarioService {
 
     public Funcionario cadastrarFuncionario(Funcionario funcionario, Integer idCargo){
         try {
-            funcionario.setIdFuncionario(null);
+            funcionario.setId(null);
             funcionario.setFoto("");
             Optional<Cargo> cargo = cargoRepository.findById(idCargo);
             funcionario.setCargo(cargo.get());

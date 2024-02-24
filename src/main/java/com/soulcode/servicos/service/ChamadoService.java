@@ -6,33 +6,29 @@ import com.soulcode.servicos.model.Funcionario;
 import com.soulcode.servicos.model.StatusChamado;
 import com.soulcode.servicos.model.exception.ChamadoNaoEncontradoException;
 import com.soulcode.servicos.repository.ChamadoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class ChamadoService {
 
-    @Autowired
-    private ChamadoRepository chamadoRepository;
+    private final ChamadoRepository chamadoRepository;
 
-//    @Autowired
-//    private ClienteRepository clienteRepository;
-//
-//    @Autowired
-//    private FuncionarioRepository funcionarioRepository;
+    private final ClienteService clienteService;
 
-    @Autowired
-    private ClienteService clienteService;
+    private final FuncionarioService funcionarioService;
 
-    @Autowired
-    private FuncionarioService funcionarioService;
+    public ChamadoService(ChamadoRepository chamadoRepository, ClienteService clienteService, FuncionarioService funcionarioService) {
+        this.chamadoRepository = chamadoRepository;
+        this.clienteService = clienteService;
+        this.funcionarioService = funcionarioService;
+    }
 
     @Cacheable("chamadosCache")
     public List<Chamado> listar(){

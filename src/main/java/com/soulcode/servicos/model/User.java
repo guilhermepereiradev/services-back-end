@@ -1,8 +1,7 @@
 package com.soulcode.servicos.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 public class User {

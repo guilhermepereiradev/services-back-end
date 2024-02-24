@@ -4,7 +4,6 @@ import com.soulcode.servicos.model.Chamado;
 import com.soulcode.servicos.model.StatusChamado;
 import com.soulcode.servicos.service.ChamadoService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,20 +15,23 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/servicos/chamados")
+@RequestMapping("/api/servicos/chamados")
 public class ChamadoController {
 
-    @Autowired
-    private ChamadoService chamadoService;
+    private final ChamadoService chamadoService;
+
+    public ChamadoController(ChamadoService chamadoService) {
+        this.chamadoService = chamadoService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Chamado>> buscar(){
         return ResponseEntity.ok(chamadoService.listar());
     }
 
-    @GetMapping("/{idChamado}")
-    public ResponseEntity<Chamado> mostrarChamadoPeloId(@PathVariable Integer idChamado){
-        return ResponseEntity.ok(chamadoService.buscarOuFalhar(idChamado));
+    @GetMapping("/{id}")
+    public ResponseEntity<Chamado> mostrarChamadoPeloId(@PathVariable Integer id){
+        return ResponseEntity.ok(chamadoService.buscarOuFalhar(id));
     }
 
     @GetMapping("/{idCliente}/cliente")
@@ -57,7 +59,7 @@ public class ChamadoController {
     @PostMapping("/chamados/{idCliente}/clientes")
     public ResponseEntity<Chamado> cadastrarChamado(@RequestBody Chamado chamado, @PathVariable Integer idCliente){
         chamado = chamadoService.cadastrarChamado(chamado, idCliente);
-        URI novaUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(chamado.getIdChamado()).toUri();
+        URI novaUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(chamado.getId()).toUri();
         return ResponseEntity.created(novaUri).body(chamado);
     }
 

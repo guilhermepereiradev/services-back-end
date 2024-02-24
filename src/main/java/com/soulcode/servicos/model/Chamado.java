@@ -1,14 +1,14 @@
 package com.soulcode.servicos.model;
 
+import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 public class Chamado {
     @Id
-    private Integer idChamado;
+    private Integer id;
 
     @Column(nullable = false)
     private String titulo;
@@ -35,12 +35,12 @@ public class Chamado {
     @JoinColumn(name = "idPagamento", unique = true)
     private Pagamento pagamento;
 
-    public Integer getIdChamado() {
-        return idChamado;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdChamado(Integer idChamado) {
-        this.idChamado = idChamado;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getTitulo() {

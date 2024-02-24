@@ -1,5 +1,8 @@
 package com.soulcode.servicos.controller;
 
+import com.soulcode.servicos.dtos.ChamadoResumoResponse;
+import com.soulcode.servicos.dtos.ClienteResponse;
+import com.soulcode.servicos.dtos.ClienteResumoResponse;
 import com.soulcode.servicos.model.Cliente;
 import com.soulcode.servicos.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,46 +15,54 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/servicos")
+@RequestMapping("/api/servicos/clientes")
 public class ClienteController {
 
-    @Autowired
+    final
     ClienteService clienteService;
 
-    @GetMapping("/clientes")
-    public List<Cliente> mostrarTodosClientes(){
-        List<Cliente> clientes = clienteService.listar();
-        return clientes;
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
     }
 
-    @GetMapping("/clientes/{idCliente}")
-    public ResponseEntity<Cliente> mostrarClientePeloId(@PathVariable Integer idCliente){
-        Cliente cliente = clienteService.buscarOuFalhar(idCliente);
-        return ResponseEntity.ok().body(cliente);
+    /**
+     * TODO
+     *  Implementar consulta com filtro por email
+     */
+    @GetMapping
+    public ResponseEntity<List<ClienteResumoResponse>> mostrarTodosClientes(){
+        var clientes = clienteService.listar()
+                .stream()
+                .map(ClienteResumoResponse::new)
+                .toList();
+        return ResponseEntity.ok(clientes);
     }
 
-    @GetMapping("/clientesEmail/{email}")
-    public ResponseEntity<Cliente> mostrarClientePeloEmail(@PathVariable String email){
-        Cliente cliente = clienteService.mostrarClientePeloEmail(email);
-        return ResponseEntity.ok().body(cliente);
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteResponse> mostrarClientePeloId(@PathVariable Integer id){
+        var cliente = clienteService.buscarOuFalhar(id);
+        var chamados = cliente.getChamados().stream().map(ChamadoResumoResponse::new).toList();
+        return ResponseEntity.ok(new ClienteResponse(cliente, chamados));
     }
+
 
     @PostMapping("/clientes")
-    public ResponseEntity<Cliente> cadastrarCliente(@RequestBody Cliente cliente){
+    public ResponseEntity<ClienteResponse> cadastrarCliente(@RequestBody Cliente cliente){
         cliente = clienteService.cadastrarCliente(cliente);
-        URI novaUri = ServletUriComponentsBuilder.fromCurrentRequest().path("id").buildAndExpand(cliente.getIdCliente()).toUri();
-        return ResponseEntity.created(novaUri).body(cliente);
+        var chamados = cliente.getChamados().stream().map(ChamadoResumoResponse::new).toList();
+        URI novaUri = ServletUriComponentsBuilder.fromCurrentRequest().path("id").buildAndExpand(cliente.getId()).toUri();
+        return ResponseEntity.created(novaUri).body(new ClienteResponse(cliente, chamados));
     }
 
-    @DeleteMapping("/clientes/{idCliente}")
-    public ResponseEntity<Void> excluirCliente(@PathVariable Integer idCliente){
-        clienteService.excluirCliente(idCliente);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/clientes/{id}")
+    public ResponseEntity<Void> excluirCliente(@PathVariable Integer id){
+        clienteService.excluirCliente(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/clientes/{idCliente}")
-    public ResponseEntity<Cliente> editarCliente(@PathVariable Integer idCliente, @RequestBody Cliente cliente){
-        cliente.setIdCliente(idCliente);
+    public ResponseEntity<ClienteResponse> editarCliente(@PathVariable Integer idCliente, @RequestBody Cliente cliente){
+        cliente.setId(idCliente);
         clienteService.editarCliente(cliente);
         return ResponseEntity.ok().build();
     }
