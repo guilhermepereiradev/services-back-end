@@ -1,7 +1,6 @@
 package com.soulcode.servicos.dtos;
 
 import com.soulcode.servicos.model.Pagamento;
-import com.soulcode.servicos.model.StatusPagamento;
 
 public record PagamentoResponse(
         Integer id,

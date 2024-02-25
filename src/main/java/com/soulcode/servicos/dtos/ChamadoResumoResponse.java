@@ -4,7 +4,6 @@ import com.soulcode.servicos.model.Chamado;
 import com.soulcode.servicos.model.StatusChamado;
 
 import java.util.Date;
-import java.util.List;
 
 public record ChamadoResumoResponse(
         Integer id,

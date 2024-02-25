@@ -1,8 +1,6 @@
 package com.soulcode.servicos.dtos;
 
 import com.soulcode.servicos.model.Endereco;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 
 public record EnderecoResponse(
         Integer id,

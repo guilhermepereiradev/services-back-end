@@ -5,7 +5,6 @@ import com.soulcode.servicos.dtos.ClienteResponse;
 import com.soulcode.servicos.dtos.ClienteResumoResponse;
 import com.soulcode.servicos.model.Cliente;
 import com.soulcode.servicos.service.ClienteService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;

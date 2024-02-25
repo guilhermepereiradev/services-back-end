@@ -2,7 +2,6 @@ package com.soulcode.servicos.controller;
 
 import com.soulcode.servicos.model.User;
 import com.soulcode.servicos.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,11 +14,15 @@ import java.util.List;
 @RequestMapping("/servicos")
 public class UserController{
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @GetMapping("/usuarios")
     public List<User> listarUsuarios(){
