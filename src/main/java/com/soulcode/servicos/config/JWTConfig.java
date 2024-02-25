@@ -23,13 +23,13 @@ import java.util.List;
 
 @Configuration
 public class JWTConfig {
-    private JWTUtils jwtUtils;
+    private final JWTUtils jwtUtils;
 
-    private AuthUserDetailService authUserDetailService;
+    private final AuthUserDetailService authUserDetailService;
 
-    private AuthenticationConfiguration authenticationConfiguration;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public JWTConfig(JWTUtils jwtUtils, AuthUserDetailService authUserDetailService, AuthenticationConfiguration authenticationManager, PasswordEncoder passwordEncoder) {
         this.jwtUtils = jwtUtils;
@@ -46,6 +46,7 @@ public class JWTConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(
                         new JWTAuthenticationFilter(
