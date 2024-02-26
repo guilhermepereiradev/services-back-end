@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import java.io.IOException;
 import java.util.ArrayList;
 
-//entra em ação em todos endpoints que está protegidp
+
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private JWTUtils jwtUtils;
 
@@ -29,16 +29,13 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
           UsernamePasswordAuthenticationToken authToken = getAuthentication(token.substring(7));
           if (authToken != null){
               SecurityContextHolder.getContext().setAuthentication(authToken);
-              // SecurityContextHolder.getContext().getAuthentication();
-              // Guarda informações do usuario autenticado no contexto do Spring
-              // Essa informação pose ser utilizafa dentro dos controllers da aplicação
           }
         }
         chain.doFilter(request, response);
     }
 
     public UsernamePasswordAuthenticationToken getAuthentication(String token){
-        String login = jwtUtils.getLogin(token); //extrai o login/email(subject) do token
+        String login = jwtUtils.getLogin(token);
         if(login == null){
             return null;
         }
