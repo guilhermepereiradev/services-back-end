@@ -2,14 +2,12 @@ package com.soulcode.servicos.model;
 
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-@Entity
+@Embeddable
 public class Endereco {
-
-    @Id
-    private Integer id;
 
     @Column(nullable = false)
     private String rua;
@@ -22,14 +20,6 @@ public class Endereco {
 
     @Column(nullable = false)
     private String uf;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getRua() {
         return rua;

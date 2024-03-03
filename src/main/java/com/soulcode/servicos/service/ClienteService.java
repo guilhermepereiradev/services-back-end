@@ -41,7 +41,6 @@ public class ClienteService {
                 );
     }
 
-    @CachePut(value = "clientesCache", key = "#cliente.idCliente")
     public Cliente cadastrarCliente(Cliente cliente){
         return clienteRepository.save(cliente);
     }

@@ -23,10 +23,8 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<Chamado> chamados = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "idEndereco", unique=true)
+    @Embedded
     private Endereco endereco;
-
 
     public Integer getId() {
         return id;
